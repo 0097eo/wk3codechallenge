@@ -61,21 +61,27 @@ function getMovies() {
             showMovieTitles(movies)
         }
     })
+    .catch(error => console.error('Error fetching movies:', error));
 }
 
 //update remaining films on click of the buy ticket button
-function updateTicketsCount(films){
+function updateTicketsCount(films) {
     fetch(`${baseUrl}/${films.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({tickets_sold: films.tickets_sold + 1})
-    }).then(res=>res.json())
-    .then(updateMovie=>{
-        
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return res.json();
+    })
+    .then(updateMovie => {
         const remainingTickets = updateMovie.capacity - updateMovie.tickets_sold;
-        document.getElementById('ticket-num').textContent = remainingTickets
+        document.getElementById('ticket-num').textContent = remainingTickets;
         // check if the movie is now sold out
         if (remainingTickets === 0) {
             // disable the "Buy Ticket" button
@@ -83,7 +89,8 @@ function updateTicketsCount(films){
             document.getElementById("buy-ticket").textContent = 'Sold Out';
             window.location.reload()
         }
-    });
+    })
+    .catch(error => console.error('Error updating tickets count:', error));
 }
 
 //post the bought ticket to the tickets endpoint
@@ -101,7 +108,7 @@ function postTicketPurchase(filmId, numberOfTickets) {
         body: JSON.stringify(ticketData)
     })
     .then(response => response.json())
-    
+    .catch(error => console.error('Error posting movie ticket:', error));
 }
 
 
@@ -114,6 +121,7 @@ function deleteFilm(filmID) {
         }
     })
     .then(res=>res.json())
+    .catch(error => console.error('Error deleting movies:', error));
     //reload page on successful delete 
     window.location.reload()
 }
