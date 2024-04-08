@@ -81,6 +81,7 @@ function updateTicketsCount(films){
             // disable the "Buy Ticket" button
             document.getElementById("buy-ticket").disabled = true;
             document.getElementById("buy-ticket").textContent = 'Sold Out';
+            window.location.reload()
         }
     });
 }
